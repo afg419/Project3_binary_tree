@@ -124,8 +124,19 @@ class BinaryTreeTest < Minitest::Test
       tree.add_node(input)
     end
     tree.add_node(-1)
-
     assert_equal -1, tree.minimum
+  end
+
+  def test_can_sort_entries
+    library = (0..1000).to_a.shuffle
+    library.delete(500)
+    inputs = library[0..500]
+    tree = BinaryTree.new(500)
+    inputs.each do |input|
+      tree.add_node(input)
+    end
+
+    assert_equal (inputs+[500]).sort , tree.sort
 
   end
 

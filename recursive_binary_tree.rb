@@ -11,6 +11,17 @@ class BinaryTree
     @right = nil
   end
 
+  def bi_conditional_executable(a_bool,a_true_b1_bool,a_false_b2_bool, lambda_aTb1T, lambda_aFb1T, lambda_aFb2T, lambda_aFb2F)
+
+    executor = { true => { true => lambda_aTb1T ,
+                          false => lambda_aFb1T},
+                false => { true => lambda_aFb2T ,
+                          false => lambda_aFb2F } }
+
+    executor[a_bool][a_bool ? a_true_b1_bool : a_false_b2_bool].call
+
+  end
+
   def add_node(data)
 
     # H = { true => { true => make new node set to left  ,
@@ -98,8 +109,45 @@ class BinaryTree
     counter
   end
 
+  def sort
+    if left.nil? && right.nil?
+      [root]
+    elsif left.nil?
+      [root] + right.sort
+    elsif right.nil?
+      left.sort + [root]
+    else
+      left.sort + [root] + right.sort
+    end
+  end
+
+  def delete(value)
+
+    if !right.nil? && right.root == value
+      right = nil
+    elsif !left.nil? && left.root == value
+      left = nil
+    elsif value < root
+      left.delete(value)
+    elsif value > root
+      right.delete(value)
+    end
+
+  end
+
+
 
 end
+
+
+
+
+
+
+
+
+
+
 
 tree = BinaryTree.new(10)
 puts tree.left
@@ -116,3 +164,6 @@ puts "expect 2 #{tree.depth_of(12)}"
 puts tree.inspect
 puts tree.maximum
 puts tree.enumerate
+puts tree.sort.inspect
+# puts tree.delete(10.5).inspect
+p tree
