@@ -96,9 +96,26 @@ class BinaryTreeTest < Minitest::Test
     inputs.each do |input|
       tree.add_node(input)
     end
-
+    assert_equal 0, tree.depth_of(0)
+    assert_equal 3, tree.depth_of(- 12)
     assert_equal 6, tree.depth_of(10)
   end
+
+  def test_can_determine_maximum_value
+    library = (0..1000).to_a.shuffle
+    library.delete(500)
+    inputs = library[0..500]
+    tree = BinaryTree.new(500)
+    inputs.each do |input|
+      tree.add_node(input)
+    end
+    tree.add_node(1001)
+
+    assert_equal 1001, tree.maximum
+
+  end
+
+
 
 
 

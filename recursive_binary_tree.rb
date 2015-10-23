@@ -68,6 +68,17 @@ class BinaryTree
 
   end
 
+  def maximum
+
+    if right.nil?
+      max = root
+    else
+      max = right.maximum
+    end
+
+
+  end
+
 
 
 end
@@ -85,3 +96,4 @@ puts tree.right.left.root
 puts tree.include?(10.5)
 puts "expect 2 #{tree.depth_of(12)}"
 puts tree.inspect
+puts tree.maximum
