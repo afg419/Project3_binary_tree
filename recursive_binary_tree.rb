@@ -18,7 +18,7 @@ class BinaryTree
     #      false => { true => make new node set to right ,
     #                false => right add_node }}
     #
-    #   H[data < root][data < root ? left.nil? : right.nil?]
+    #   H[data < root][data < root ? left.nil? : right.nil?].call
 
     if left.nil? && data < root
       @left = BinaryTree.new(data)
@@ -34,19 +34,18 @@ class BinaryTree
 
 
   def include?(data)
-    bool = false
+    false
     if data == root
-      bool = true
+      true
     elsif left.nil? && data < root
-      bool = false
+      false
     elsif right.nil? && data > root
-      bool = false
+      false
     elsif data < root
-      bool = left.include?(data)
+      left.include?(data)
     elsif data > root
-      bool = right.include?(data)
+      right.include?(data)
     end
-    bool
   end
 
   def depth_of(data)
@@ -69,16 +68,35 @@ class BinaryTree
   end
 
   def maximum
-
     if right.nil?
       max = root
     else
       max = right.maximum
     end
-
-
   end
 
+  def minimum
+    if left.nil?
+      min = root
+    else
+      min = left.minimum
+    end
+  end
+
+
+  def enumerate
+    counter = 0
+    if left.nil? && right.nil?
+      counter = counter + 1
+    elsif left.nil?
+      counter = right.enumerate + 1
+    elsif right.nil?
+      counter = left.enumerate + 1
+    else
+      counter = left.enumerate + right.enumerate + 1
+    end
+    counter
+  end
 
 
 end
@@ -97,3 +115,4 @@ puts tree.include?(10.5)
 puts "expect 2 #{tree.depth_of(12)}"
 puts tree.inspect
 puts tree.maximum
+puts tree.enumerate
