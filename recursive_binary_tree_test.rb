@@ -90,6 +90,16 @@ class BinaryTreeTest < Minitest::Test
     assert_equal inputs.include?(test_val) , tree.include?(test_val)
   end
 
+  def test_can_determine_depth_of_a_value
+    tree = BinaryTree.new(0)
+    inputs = [12,-1,-8,4,5,3,-2,8,7,-3,2,-12,11,10]
+    inputs.each do |input|
+      tree.add_node(input)
+    end
+
+    assert_equal 6, tree.depth_of(10)
+  end
+
 
 
 

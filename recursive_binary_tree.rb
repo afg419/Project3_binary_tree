@@ -49,6 +49,25 @@ class BinaryTree
     bool
   end
 
+  def depth_of(data)
+    depth = 0
+
+    if data == root
+      depth
+    elsif left.nil? && data < root
+      depth = "ERROR - data not in tree"
+    elsif right.nil? && data > root
+      depth = "ERROR - data not in tree"
+    elsif data < root
+      depth = 1 + left.depth_of(data)
+    elsif data > root
+      depth = 1 + right.depth_of(data)
+    end
+
+    depth
+
+  end
+
 
 
 end
@@ -64,3 +83,5 @@ tree.add_node(10.5)
 puts tree.right.right.root
 puts tree.right.left.root
 puts tree.include?(10.5)
+puts "expect 2 #{tree.depth_of(12)}"
+puts tree.inspect
