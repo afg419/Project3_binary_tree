@@ -24,38 +24,42 @@ class BinaryTree
 
   def add_node(data)
 
-    # H = { true => { true => make new node set to left  ,
-    #                false => left add_node },
-    #      false => { true => make new node set to right ,
-    #                false => right add_node }}
+      l1 = lambda {@left = BinaryTree.new(data)}
+      l2 = lambda {@right = BinaryTree.new(data)}
+      l3 = lambda {left.add_node(data)}
+      l4 = lambda {right.add_node(data)}
+
+    bi_conditional_executable(data < root, left.nil?, right.nil?, l1,l3,l2,l4)
+
     #
-    #   H[data < root][data < root ? left.nil? : right.nil?].call
+    # if left.nil? && data < root
+    #   @left = BinaryTree.new(data)
+    # elsif right.nil? && data > root
+    #   @right = BinaryTree.new(data)
+    # elsif data < root
+    #   left.add_node(data)
+    # elsif data > root
+    #   right.add_node(data)
+    # end
 
-    if left.nil? && data < root
-      @left = BinaryTree.new(data)
-    elsif right.nil? && data > root
-      @right = BinaryTree.new(data)
-    elsif data < root
-      left.add_node(data)
-    elsif data > root
-      right.add_node(data)
+  end
+
+
+  def add_many_nodes(data_array)
+    data_array.each do |datum|
+      add_node(datum)
     end
-
   end
 
 
   def include?(data)
     false
-    if data == root
-      true
-    elsif left.nil? && data < root
-      false
-    elsif right.nil? && data > root
-      false
-    elsif data < root
+    if data < root && !left.nil?
       left.include?(data)
-    elsif data > root
+    elsif data > root && !right.nil?
       right.include?(data)
+    else
+      data == root
     end
   end
 
@@ -64,7 +68,7 @@ class BinaryTree
 
     if data == root
       depth
-    elsif left.nil? && data < root
+    elsif left.nil? && data < root || right.nil? && data > root
       depth = "ERROR - data not in tree"
     elsif right.nil? && data > root
       depth = "ERROR - data not in tree"
@@ -121,19 +125,50 @@ class BinaryTree
     end
   end
 
-  def delete(value)
+  def leaf_count
+    count = 0
+    if left.nil? && right.nil?
+      count = 1
+    elsif left.nil?
+      count = right.leaf_count
+    elsif right.nil?
+      count = left.leaf_count
+    else
+      count = left.leaf_count + right.leaf_count
+    end
+    count
+  end
 
-    if !right.nil? && right.root == value
-      right = nil
-    elsif !left.nil? && left.root == value
-      left = nil
-    elsif value < root
-      left.delete(value)
-    elsif value > root
-      right.delete(value)
+  def max_branch_depth
+    depth = 0
+    if left.nil? && right.nil?
+      depth
+    elsif right.nil?
+      depth = left.max_branch_depth + 1
+    elsif left.nil?
+      depth = right.max_branch_depth + 1
+    else
+      depth = [left.max_branch_depth,right.max_branch_depth].max + 1
     end
 
+
   end
+  # def delete(value)
+  #
+  #   if
+  #
+  #
+  #   if !right.nil? && right.root == value
+  #     right = nil
+  #   elsif !left.nil? && left.root == value
+  #     left = nil
+  #   elsif value < root
+  #     left.delete(value)
+  #   elsif value > root
+  #     right.delete(value)
+  #   end
+  #
+  # end
 
 
 
@@ -165,5 +200,13 @@ puts tree.inspect
 puts tree.maximum
 puts tree.enumerate
 puts tree.sort.inspect
-# puts tree.delete(10.5).inspect
+tree.add_node(13)
+tree.add_node(14)
+tree.add_node(1)
+tree.add_node(2)
+tree.add_node(3)
+tree.add_node(4)
+tree.add_node(5)
+puts tree.leaf_count
+puts tree.max_branch_depth
 p tree
