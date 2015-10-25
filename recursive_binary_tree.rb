@@ -3,7 +3,7 @@ require 'pry'
 
 class BinaryTree
 
-  attr_accessor :root, :left, :right, :bool
+  attr_accessor :root, :left, :right
 
   def initialize(data)
     @root = data
@@ -66,11 +66,7 @@ class BinaryTree
   def depth_of(data)
     depth = 0
 
-    if data == root
-      depth
-    elsif left.nil? && data < root || right.nil? && data > root
-      depth = "ERROR - data not in tree"
-    elsif right.nil? && data > root
+    if left.nil? && data < root || right.nil? && data > root
       depth = "ERROR - data not in tree"
     elsif data < root
       depth = 1 + left.depth_of(data)
@@ -99,10 +95,12 @@ class BinaryTree
   end
 
 
+
+
   def enumerate
     counter = 0
     if left.nil? && right.nil?
-      counter = counter + 1
+      counter += 1
     elsif left.nil?
       counter = right.enumerate + 1
     elsif right.nil?
@@ -150,23 +148,65 @@ class BinaryTree
     else
       depth = [left.max_branch_depth,right.max_branch_depth].max + 1
     end
+  end
 
+
+  def delete_beneath_and_regen(new_tree,marker)
+    if !left.nil? && !left.root.nil?
+      new_tree.add_node(left.delete_beneath_and_regen(new_tree,marker))
+    end
+
+    if !right.nil? && !right.root.nil?
+      new_tree.add_node(right.delete_beneath_and_regen(new_tree,marker))
+    end
+
+    if root == marker
+      new_tree
+    elsif (left.nil? || left.root.nil?) && (right.nil? || right.root.nil?)
+      temp = root
+      @root = nil
+      temp
+    end
 
   end
+
+  def delete(value)
+    if !@right.nil? && @right.root == value
+      @right = delete_beneath_and_regen(BinaryTree.new(@right.root),root)
+    elsif !@left.nil? && left.root == value
+      @left = delete_beneath_and_regen(BinaryTree.new(@left.root),root)
+    elsif !@right.nil? && value > root
+      @right.delete(value)
+    elsif !@left.nil? && value < root
+      @left.delete(value)
+    end
+  end
+
   # def delete(value)
   #
-  #   if
+  #   found_value = false
+  #
+  #     if root == value
+  #       found_value = true
+  #     end
+  #
+  #     binding.pry
+  #
+  #     if !found_value
+  #       if value < root && !left.nil?
+  #         left.delete(value)
+  #       elsif value > root && !right.nil?
+  #         right.delete(value)
+  #       elsif root == value
+  #         found_value = true
+  #       end
+  #     end
+  #
+  #     if found_value
+  #       delete_beneath_and_regen
+  #     end
   #
   #
-  #   if !right.nil? && right.root == value
-  #     right = nil
-  #   elsif !left.nil? && left.root == value
-  #     left = nil
-  #   elsif value < root
-  #     left.delete(value)
-  #   elsif value > root
-  #     right.delete(value)
-  #   end
   #
   # end
 
@@ -174,39 +214,8 @@ class BinaryTree
 
 end
 
-
-
-
-
-
-
-
-
-
-
 tree = BinaryTree.new(10)
-puts tree.left
-puts tree.right
-tree.add_node(11)
+tree.add_many_nodes([15,12,6,8,4,13,11])
 
-puts tree.right.root
-tree.add_node(12)
-tree.add_node(10.5)
-puts tree.right.right.root
-puts tree.right.left.root
-puts tree.include?(10.5)
-puts "expect 2 #{tree.depth_of(12)}"
-puts tree.inspect
-puts tree.maximum
-puts tree.enumerate
-puts tree.sort.inspect
-tree.add_node(13)
-tree.add_node(14)
-tree.add_node(1)
-tree.add_node(2)
-tree.add_node(3)
-tree.add_node(4)
-tree.add_node(5)
-puts tree.leaf_count
-puts tree.max_branch_depth
-p tree
+key = tree.delete(13)
+p key
