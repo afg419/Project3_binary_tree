@@ -3,12 +3,14 @@ require 'pry'
 
 class BinaryTree
 
-  attr_accessor :root, :left, :right
+  attr_accessor :root, :left, :right, :reader, :head
 
   def initialize(data)
     @root = data
     @left = nil
     @right = nil
+    @reader = self
+    @head = self
   end
 
   def bi_conditional_executable(a_bool,a_true_b1_bool,a_false_b2_bool, lambda_aTb1T, lambda_aFb1T, lambda_aFb2T, lambda_aFb2F)
@@ -28,7 +30,6 @@ class BinaryTree
       l2 = lambda {@right = BinaryTree.new(data)}
       l3 = lambda {left.add_node(data)}
       l4 = lambda {right.add_node(data)}
-
     bi_conditional_executable(data < root, left.nil?, right.nil?, l1,l3,l2,l4)
 
     #
@@ -111,6 +112,10 @@ class BinaryTree
     counter
   end
 
+  def whose_nil
+    [left.nil?,right.nil?]
+  end
+
   def sort
     if left.nil? && right.nil?
       [root]
@@ -170,52 +175,47 @@ class BinaryTree
 
   end
 
-  def delete(value)
-    if !@right.nil? && @right.root == value
-      @right = delete_beneath_and_regen(BinaryTree.new(@right.root),root)
-    elsif !@left.nil? && left.root == value
-      @left = delete_beneath_and_regen(BinaryTree.new(@left.root),root)
-    elsif !@right.nil? && value > root
-      @right.delete(value)
-    elsif !@left.nil? && value < root
-      @left.delete(value)
+  def remove_beneath(value)
+
+    new_tree = nil
+
+    loop do
+
+      if !reader.left.nil? && reader.left.root == value
+        new_tree = @reader.left.delete_beneath_and_regen(BinaryTree.new(value),value)
+        reader.left.root = nil
+        break
+      elsif !reader.right.nil? && reader.right.root == value
+        new_tree = @reader.right.delete_beneath_and_regen(BinaryTree.new(value),value)
+        reader.right.root = nil
+        break
+      elsif value < reader.root
+        @reader = reader.left
+      elsif value > reader.root
+        @reader = reader.right
+      end
+
+      new_tree
+
     end
+
+    new_tree
+
   end
 
-  # def delete(value)
-  #
-  #   found_value = false
-  #
-  #     if root == value
-  #       found_value = true
-  #     end
-  #
-  #     binding.pry
-  #
-  #     if !found_value
-  #       if value < root && !left.nil?
-  #         left.delete(value)
-  #       elsif value > root && !right.nil?
-  #         right.delete(value)
-  #       elsif root == value
-  #         found_value = true
-  #       end
-  #     end
-  #
-  #     if found_value
-  #       delete_beneath_and_regen
-  #     end
-  #
-  #
-  #
-  # end
+  def delete_and_regen(value)
+    new_tree = remove_beneath(value)
+    new_tree.delete_beneath_and_regen(new_tree,value)
 
-
+  end
 
 end
 
-tree = BinaryTree.new(10)
-tree.add_many_nodes([15,12,6,8,4,13,11])
 
-key = tree.delete(13)
-p key
+tree = BinaryTree.new(10)
+tree.add_many_nodes([1,4,2,11,3,14])
+
+new_tree = tree.remove_beneath(2)
+p new_tree.sort
+p tree.sort
+p tree.root

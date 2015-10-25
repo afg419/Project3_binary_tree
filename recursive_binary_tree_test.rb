@@ -228,5 +228,66 @@ class BinaryTreeTest < Minitest::Test
     assert_equal 6, tree.max_branch_depth
   end
 
+  def test_can_replace_root_value_medium_tree
+    tree = BinaryTree.new(0)
+    inputs = [12,-1,-8,4,5,3,-2,8,7,-3,2,-12,11,10]
+    tree.add_many_nodes(inputs)
+    expected = inputs + [100]
+    new_tree = BinaryTree.new(100)
+
+    assert_equal expected.sort, tree.delete_beneath_and_regen(new_tree,0).sort
+  end
+
+
+  def test_can_replace_root_value
+    library = (0..1000).to_a.shuffle
+    library.delete(500)
+    inputs = library[0..500]
+    tree = BinaryTree.new(500)
+    tree.add_many_nodes(inputs)
+
+    expected = inputs + [-1]
+    new_tree = BinaryTree.new(-1)
+
+    assert_equal expected.sort, tree.delete_beneath_and_regen(new_tree,500).sort
+  end
+
+  def test_can_merge_trees_minus_one_root
+    library = (0..1000).to_a.shuffle
+    library.delete(500)
+    inputs = library[0..500]
+    tree = BinaryTree.new(500)
+    tree.add_many_nodes(inputs)
+
+    new_library = (1001..2000).to_a.shuffle
+    new_library.delete(1500)
+    new_inputs = library[0..500]
+    new_tree = BinaryTree.new(1500)
+    new_tree.add_many_nodes(inputs)
+    expected = (inputs+new_inputs+[1500])
+    computed = tree.delete_beneath_and_regen(new_tree,500)
+
+    assert_equal expected.sort , computed.sort
+    refute computed.root.nil?
+  end
+
+  def test_can_move_all_entries_beneath_value_to_new_tree
+    library = (0..1000).to_a.shuffle
+    library.delete(500)
+    inputs = library[0..500]
+    kill_beneath = inputs.sample
+    tree = BinaryTree.new(500)
+    tree.add_many_nodes(inputs)
+
+    new_tree = tree.remove_beneath(kill_beneath)
+
+    assert !new_tree.root.nil?
+    assert !tree.root.nil?
+    # refute tree.include?(kill_beneath)
+    # assert new_tree.include?(kill_beneath)
+    assert_equal (inputs+[500]).sort , (tree.sort.compact + new_tree.sort.compact).sort
+  end
+
+
 
 end
