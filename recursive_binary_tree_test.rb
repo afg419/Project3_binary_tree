@@ -264,29 +264,33 @@ class BinaryTreeTest < Minitest::Test
     new_inputs = library[0..500]
     new_tree = BinaryTree.new(1500)
     new_tree.add_many_nodes(inputs)
-    expected = (inputs+new_inputs+[1500])
+    sample = new_inputs.sample
+    expected = (inputs + new_inputs + [1500])
     computed = tree.delete_beneath_and_regen(new_tree,500)
 
+    assert computed.include?(sample)
+    assert computed.include?(1500)
+    refute computed.include?(500)
+    assert tree.include?(500)
     assert_equal expected.sort , computed.sort
-    refute computed.root.nil?
   end
 
-  def test_can_move_all_entries_beneath_value_to_new_tree
-    library = (0..1000).to_a.shuffle
-    library.delete(500)
-    inputs = library[0..500]
-    kill_beneath = inputs.sample
-    tree = BinaryTree.new(500)
-    tree.add_many_nodes(inputs)
-
-    new_tree = tree.remove_beneath(kill_beneath)
-
-    assert !new_tree.root.nil?
-    assert !tree.root.nil?
-    refute tree.include?(kill_beneath)
-    assert new_tree.include?(kill_beneath)
-    assert_equal (inputs+[500]).sort , (tree.sort.compact + new_tree.sort.compact).sort
-  end
+  # def test_can_move_all_entries_beneath_value_to_new_tree
+  #   library = (0..1000).to_a.shuffle
+  #   library.delete(500)
+  #   inputs = library[0..500]
+  #   kill_beneath = inputs.sample
+  #   tree = BinaryTree.new(500)
+  #   tree.add_many_nodes(inputs)
+  #
+  #   new_tree = tree.remove_beneath(kill_beneath)
+  #
+  #   assert !new_tree.root.nil?
+  #   assert !tree.root.nil?
+  #   refute tree.include?(kill_beneath)
+  #   assert new_tree.include?(kill_beneath)
+  #   assert_equal (inputs+[500]).sort , (tree.sort.compact + new_tree.sort.compact).sort
+  # end
 
   # def test_can_delete_value_small_tree
   #   tree = BinaryTree.new(10)
