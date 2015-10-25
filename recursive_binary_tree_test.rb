@@ -283,8 +283,8 @@ class BinaryTreeTest < Minitest::Test
 
     assert !new_tree.root.nil?
     assert !tree.root.nil?
-    # refute tree.include?(kill_beneath)
-    # assert new_tree.include?(kill_beneath)
+    refute tree.include?(kill_beneath)
+    assert new_tree.include?(kill_beneath)
     assert_equal (inputs+[500]).sort , (tree.sort.compact + new_tree.sort.compact).sort
   end
 

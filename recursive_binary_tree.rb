@@ -183,11 +183,11 @@ class BinaryTree
 
       if !reader.left.nil? && reader.left.root == value
         new_tree = @reader.left.delete_beneath_and_regen(BinaryTree.new(value),value)
-        reader.left.root = nil
+        reader.left = nil
         break
       elsif !reader.right.nil? && reader.right.root == value
         new_tree = @reader.right.delete_beneath_and_regen(BinaryTree.new(value),value)
-        reader.right.root = nil
+        reader.right = nil
         break
       elsif value < reader.root
         @reader = reader.left
