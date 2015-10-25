@@ -10,7 +10,6 @@ class BinaryTree
     @left = nil
     @right = nil
     @reader = self
-    @head = self
   end
 
   def bi_conditional_executable(a_bool,a_true_b1_bool,a_false_b2_bool, lambda_aTb1T, lambda_aFb1T, lambda_aFb2T, lambda_aFb2F)
@@ -206,16 +205,20 @@ class BinaryTree
   def delete_and_regen(value)
     new_tree = remove_beneath(value)
     new_tree.delete_beneath_and_regen(new_tree,value)
-
   end
 
 end
 
 
-tree = BinaryTree.new(10)
-tree.add_many_nodes([1,4,2,11,3,14])
-
-new_tree = tree.remove_beneath(2)
-p new_tree.sort
-p tree.sort
-p tree.root
+# tree = BinaryTree.new(10)
+# tree.add_many_nodes([1,4,2,11,3,14])
+#
+# new_tree = tree.remove_beneath(2)
+# p tree.sort
+# p new_tree.sort
+#
+# p new_tree.delete_beneath_and_regen(tree,2)
+#
+# p new_tree.sort
+# p tree.sort
+# p tree.root

@@ -288,6 +288,31 @@ class BinaryTreeTest < Minitest::Test
     assert_equal (inputs+[500]).sort , (tree.sort.compact + new_tree.sort.compact).sort
   end
 
+  # def test_can_delete_value_small_tree
+  #   tree = BinaryTree.new(10)
+  #   inputs = [1,4,2,11,3,14]
+  #   tree.add_many_nodes([1,4,2,11,3,14])
+  #   tree.delete_and_regen(2)
+  #
+  #   assert_equal (inputs + [10]).sort, tree.sort
+  #
+  # end
+
+  # def test_can_delete_value
+  #   library = (0..1000).to_a.shuffle
+  #   library.delete(500)
+  #   inputs = library[0..500]
+  #   kill = inputs.sample
+  #   tree = BinaryTree.new(500)
+  #   tree.add_many_nodes(inputs)
+  #
+  #   tree_without_kill = tree.delete_and_regen(kill)
+  #   inputs.delete(kill)
+  #   expected = (inputs + [500]).sort
+  #   computed = tree_without_kill.sort
+  #
+  #   assert_equal expected, computed
+  # end
 
 
 end
