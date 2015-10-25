@@ -158,18 +158,18 @@ class BinaryTree
   def delete_beneath_and_regen(new_tree,marker)
     if !left.nil? && !left.root.nil?
       new_tree.add_node(left.delete_beneath_and_regen(new_tree,marker))
+      @left = nil
     end
 
     if !right.nil? && !right.root.nil?
       new_tree.add_node(right.delete_beneath_and_regen(new_tree,marker))
+      @right = nil
     end
 
     if root == marker
       new_tree
     elsif (left.nil? || left.root.nil?) && (right.nil? || right.root.nil?)
-      temp = root
-      @root = nil
-      temp
+      root
     end
 
   end
