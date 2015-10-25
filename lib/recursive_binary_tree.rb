@@ -5,7 +5,7 @@ class BinaryTree
 
   attr_accessor :root, :left, :right, :reader, :head
 
-  def initialize(data)
+  def initialize(data = nil)
     @root = data
     @left = nil
     @right = nil
@@ -32,8 +32,9 @@ class BinaryTree
     #
     # bi_conditional_executable(data < root, left.nil?, right.nil?, l1,l3,l2,l4)
 
-    #
-    if left.nil? && data < root
+    if root.nil?
+      @root = data
+    elsif left.nil? && data < root
       @left = BinaryTree.new(data)
     elsif right.nil? && data > root
       @right = BinaryTree.new(data)
@@ -204,12 +205,13 @@ class BinaryTree
 
   def delete_and_regen(value)
 
-    #if root == value
-    #
-    #end
-
-    new_tree = remove_beneath(value)
-    tree = new_tree.destructive_merge_with_new_tree(self,value)
+    if root == value
+      tree = destructive_merge_with_new_tree(BinaryTree.new,value)
+    else
+      new_tree = remove_beneath(value)
+      tree = new_tree.destructive_merge_with_new_tree(self,value)
+    end
+    tree
   end
 
 end

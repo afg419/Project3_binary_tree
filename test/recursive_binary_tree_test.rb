@@ -19,6 +19,11 @@ class BinaryTreeTest < Minitest::Test
     assert BinaryTree
   end
 
+  def test_can_initialize_with_no_data_in_root
+    tree = BinaryTree.new
+    assert tree.root.nil?
+  end
+
   def test_can_initialize_with_data_in_root
     tree = BinaryTree.new(10)
 
@@ -32,10 +37,18 @@ class BinaryTreeTest < Minitest::Test
     assert tree.right.nil?
   end
 
+  def test_can_add_to_empty_tree
+    tree = BinaryTree.new
+    tree.add_node(10)
+    assert 10 == tree.root
+  end
+
   def test_adds_a_tree_to_right
-    tree = BinaryTree.new(10)
+    tree = BinaryTree.new
+    tree.add_node(10)
     tree.add_node(11)
 
+    assert_equal 10 , tree.root
     assert_equal 11 , tree.right.root
   end
 
@@ -320,22 +333,22 @@ class BinaryTreeTest < Minitest::Test
     inputs = [1,4,2,11,3,14]
     tree.add_many_nodes([1,4,2,11,3,14])
 
-    tree.delete_and_regen(2)
+    tree_without_two = tree.delete_and_regen(2)
 
-    assert_equal (inputs + [10] - [2]).sort, tree.sort
+    assert_equal (inputs + [10] - [2]).sort, tree_without_two.sort
     refute tree.include?(2)
   end
 
-  # def test_can_delete_root_value
-  #   tree = BinaryTree.new(10)
-  #   inputs = [1,4,2,11,3,14]
-  #   tree.add_many_nodes([1,4,2,11,3,14])
-  #
-  #   tree.delete_and_regen(10)
-  #
-  #   assert_equal (inputs).sort, tree.sort
-  #   refute tree.include?(10)
-  # end
+  def test_can_delete_root_value
+    tree = BinaryTree.new(10)
+    inputs = [1,4,2,11,3,14]
+    tree.add_many_nodes([1,4,2,11,3,14])
+
+    tree_without_root = tree.delete_and_regen(10)
+
+    assert_equal inputs.sort, tree_without_root.sort
+    refute tree_without_root.include?(10)
+  end
 
   def test_can_delete_value
     library = (0..1000).to_a.shuffle
