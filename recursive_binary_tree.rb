@@ -204,10 +204,13 @@ class BinaryTree
 
   def delete_and_regen(value)
     new_tree = remove_beneath(value)
-    new_tree.delete_beneath_and_regen(new_tree,value)
+    tree = new_tree.delete_beneath_and_regen(self,value)
   end
 
 end
+
+
+
 
 
 # tree = BinaryTree.new(10)

@@ -275,16 +275,25 @@ class BinaryTreeTest < Minitest::Test
     new_inputs = library[0..500]
     new_tree = BinaryTree.new(1500)
     new_tree.add_many_nodes(inputs)
+
     sample = new_inputs.sample
     expected = (inputs + new_inputs + [1500])
     computed = tree.delete_beneath_and_regen(new_tree,500)
 
+
+    # checks that merged trees (computed) contains 1500 and any random number, and not 500
+    #implicitly, running "include?" checks that computed is a well formed tree
     assert computed.include?(sample)
     assert computed.include?(1500)
     refute computed.include?(500)
-    assert tree.include?(500)
-    # assert tree.include?(100) This fails because there are 'nil's all over tree
+
+    #now we make sure that computed has all the entries of both trees excluding 500
     assert_equal expected.sort , computed.sort
+
+    #we also want to check that the original tree is well formed
+    assert_equal 500, tree.root
+    assert_equal nil, tree.left
+    assert_equal nil, tree.right
   end
 
   def test_can_move_all_entries_beneath_value_to_new_tree
@@ -297,38 +306,36 @@ class BinaryTreeTest < Minitest::Test
 
     new_tree = tree.remove_beneath(kill_beneath)
 
-    assert !new_tree.root.nil?
-    assert !tree.root.nil?
     refute tree.include?(kill_beneath)
     assert new_tree.include?(kill_beneath)
-    assert_equal (inputs+[500]).sort , (tree.sort.compact + new_tree.sort.compact).sort
+    assert_equal (inputs+[500]).sort , (tree.sort + new_tree.sort).sort
   end
 
-  # def test_can_delete_value_small_tree
-  #   tree = BinaryTree.new(10)
-  #   inputs = [1,4,2,11,3,14]
-  #   tree.add_many_nodes([1,4,2,11,3,14])
-  #   tree.delete_and_regen(2)
-  #
-  #   assert_equal (inputs + [10]).sort, tree.sort
-  #
-  # end
-  #
-  # def test_can_delete_value
-  #   library = (0..1000).to_a.shuffle
-  #   library.delete(500)
-  #   inputs = library[0..500]
-  #   kill = inputs.sample
-  #   tree = BinaryTree.new(500)
-  #   tree.add_many_nodes(inputs)
-  #
-  #   tree_without_kill = tree.delete_and_regen(kill)
-  #   inputs.delete(kill)
-  #   expected = (inputs + [500]).sort
-  #   computed = tree_without_kill.sort
-  #
-  #   assert_equal expected, computed
-  # end
+  def test_can_delete_value_small_tree
+    tree = BinaryTree.new(10)
+    inputs = [1,4,2,11,3,14]
+    tree.add_many_nodes([1,4,2,11,3,14])
+
+    tree.delete_and_regen(2)
+
+    assert_equal (inputs + [10] - [2]).sort, tree.sort
+    refute tree.include?(2)
+  end
+
+  def test_can_delete_value
+    library = (0..1000).to_a.shuffle
+    library.delete(500)
+    inputs = library[0..500]
+    kill = inputs.sample
+    tree = BinaryTree.new(500)
+    tree.add_many_nodes(inputs)
+
+    tree_without_kill = tree.delete_and_regen(kill)
+    expected = (inputs + [500] - [kill]).sort
+    computed = tree_without_kill.sort
+
+    assert_equal expected, computed
+  end
 
 
 end
