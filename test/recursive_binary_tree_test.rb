@@ -1,15 +1,18 @@
 
 require 'minitest'
 require 'pry'
-require_relative 'recursive_binary_tree'
+require_relative '../lib/recursive_binary_tree'
 
 class BinaryTreeTest < Minitest::Test
 
   attr_reader :test_tree, :inputs
 
-  def setup
-    @test_tree = BinaryTree.new(0)
-    @inputs = (0..1000).to_a.shuffle
+  def large_random_tree
+    library = (0..1000).to_a.shuffle
+    library.delete(500)
+    inputs = library[0..500]
+    tree = BinaryTree.new(500)
+    tree.add_many_nodes(inputs)
   end
 
   def test_class_exists
@@ -228,6 +231,8 @@ class BinaryTreeTest < Minitest::Test
     assert_equal 6, tree.max_branch_depth
   end
 
+### The following are tests for the deletion implementation #####
+
   def test_can_replace_root_value_small_tree
     tree = BinaryTree.new(0)
     inputs = [12,-1,-8]
@@ -235,7 +240,7 @@ class BinaryTreeTest < Minitest::Test
     expected = inputs + [100]
     new_tree = BinaryTree.new(100)
 
-    assert_equal expected.sort, tree.delete_beneath_and_regen(new_tree,0).sort
+    assert_equal expected.sort, tree.destructive_merge_with_new_tree(new_tree,0).sort
 
   end
 
@@ -246,7 +251,7 @@ class BinaryTreeTest < Minitest::Test
     expected = inputs + [100]
     new_tree = BinaryTree.new(100)
 
-    assert_equal expected.sort, tree.delete_beneath_and_regen(new_tree,0).sort
+    assert_equal expected.sort, tree.destructive_merge_with_new_tree(new_tree,0).sort
   end
 
 
@@ -260,7 +265,7 @@ class BinaryTreeTest < Minitest::Test
     expected = inputs + [-1]
     new_tree = BinaryTree.new(-1)
 
-    assert_equal expected.sort, tree.delete_beneath_and_regen(new_tree,500).sort
+    assert_equal expected.sort, tree.destructive_merge_with_new_tree(new_tree,500).sort
   end
 
   def test_can_merge_trees_minus_one_root
@@ -272,14 +277,13 @@ class BinaryTreeTest < Minitest::Test
 
     new_library = (1001..2000).to_a.shuffle
     new_library.delete(1500)
-    new_inputs = library[0..500]
+    new_inputs = new_library[0..500]
     new_tree = BinaryTree.new(1500)
-    new_tree.add_many_nodes(inputs)
+    new_tree.add_many_nodes(new_inputs)
 
     sample = new_inputs.sample
     expected = (inputs + new_inputs + [1500])
-    computed = tree.delete_beneath_and_regen(new_tree,500)
-
+    computed = tree.destructive_merge_with_new_tree(new_tree,500)
 
     # checks that merged trees (computed) contains 1500 and any random number, and not 500
     #implicitly, running "include?" checks that computed is a well formed tree
@@ -321,6 +325,17 @@ class BinaryTreeTest < Minitest::Test
     assert_equal (inputs + [10] - [2]).sort, tree.sort
     refute tree.include?(2)
   end
+
+  # def test_can_delete_root_value
+  #   tree = BinaryTree.new(10)
+  #   inputs = [1,4,2,11,3,14]
+  #   tree.add_many_nodes([1,4,2,11,3,14])
+  #
+  #   tree.delete_and_regen(10)
+  #
+  #   assert_equal (inputs).sort, tree.sort
+  #   refute tree.include?(10)
+  # end
 
   def test_can_delete_value
     library = (0..1000).to_a.shuffle

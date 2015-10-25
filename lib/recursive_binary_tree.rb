@@ -25,22 +25,23 @@ class BinaryTree
 
   def add_node(data)
 
-      l1 = lambda {@left = BinaryTree.new(data)}
-      l2 = lambda {@right = BinaryTree.new(data)}
-      l3 = lambda {left.add_node(data)}
-      l4 = lambda {right.add_node(data)}
-    bi_conditional_executable(data < root, left.nil?, right.nil?, l1,l3,l2,l4)
+    #   l1 = lambda {@left = BinaryTree.new(data)}
+    #   l2 = lambda {@right = BinaryTree.new(data)}
+    #   l3 = lambda {left.add_node(data)}
+    #   l4 = lambda {right.add_node(data)}
+    #
+    # bi_conditional_executable(data < root, left.nil?, right.nil?, l1,l3,l2,l4)
 
     #
-    # if left.nil? && data < root
-    #   @left = BinaryTree.new(data)
-    # elsif right.nil? && data > root
-    #   @right = BinaryTree.new(data)
-    # elsif data < root
-    #   left.add_node(data)
-    # elsif data > root
-    #   right.add_node(data)
-    # end
+    if left.nil? && data < root
+      @left = BinaryTree.new(data)
+    elsif right.nil? && data > root
+      @right = BinaryTree.new(data)
+    elsif data < root
+      left.add_node(data)
+    elsif data > root
+      right.add_node(data)
+    end
 
   end
 
@@ -95,8 +96,6 @@ class BinaryTree
   end
 
 
-
-
   def enumerate
     counter = 0
     if left.nil? && right.nil?
@@ -109,10 +108,6 @@ class BinaryTree
       counter = left.enumerate + right.enumerate + 1
     end
     counter
-  end
-
-  def whose_nil
-    [left.nil?,right.nil?]
   end
 
   def sort
@@ -154,15 +149,18 @@ class BinaryTree
     end
   end
 
+#####The following are used to delete a value from a tree and regenerate the tree#######################
 
-  def delete_beneath_and_regen(new_tree,marker)
+  # This method takes a tree and adds all its entries to new_tree, leaving behind just its root
+
+  def destructive_merge_with_new_tree(new_tree,marker)
     if !left.nil? && !left.root.nil?
-      new_tree.add_node(left.delete_beneath_and_regen(new_tree,marker))
+      new_tree.add_node(left.destructive_merge_with_new_tree(new_tree,marker))
       @left = nil
     end
 
     if !right.nil? && !right.root.nil?
-      new_tree.add_node(right.delete_beneath_and_regen(new_tree,marker))
+      new_tree.add_node(right.destructive_merge_with_new_tree(new_tree,marker))
       @right = nil
     end
 
@@ -174,6 +172,10 @@ class BinaryTree
 
   end
 
+  # This method uses iterative methods to find value, then calls the above to delete
+  # all entries beneath the value and returns them in a new_tree.  It also kills the
+  # value with '@left = nil' or '@right = nil'
+
   def remove_beneath(value)
 
     new_tree = nil
@@ -181,11 +183,11 @@ class BinaryTree
     loop do
 
       if !reader.left.nil? && reader.left.root == value
-        new_tree = @reader.left.delete_beneath_and_regen(BinaryTree.new(value),value)
+        new_tree = @reader.left.destructive_merge_with_new_tree(BinaryTree.new(value),value)
         reader.left = nil
         break
       elsif !reader.right.nil? && reader.right.root == value
-        new_tree = @reader.right.delete_beneath_and_regen(BinaryTree.new(value),value)
+        new_tree = @reader.right.destructive_merge_with_new_tree(BinaryTree.new(value),value)
         reader.right = nil
         break
       elsif value < reader.root
@@ -193,18 +195,21 @@ class BinaryTree
       elsif value > reader.root
         @reader = reader.right
       end
-
-      new_tree
-
     end
-
     new_tree
-
   end
 
+  #finally, we take all the values we removed with the previous method, and merge it
+  # back with the original tree.
+
   def delete_and_regen(value)
+
+    #if root == value
+    #
+    #end
+
     new_tree = remove_beneath(value)
-    tree = new_tree.delete_beneath_and_regen(self,value)
+    tree = new_tree.destructive_merge_with_new_tree(self,value)
   end
 
 end
@@ -220,7 +225,7 @@ end
 # p tree.sort
 # p new_tree.sort
 #
-# p new_tree.delete_beneath_and_regen(tree,2)
+# p new_tree.destructive_merge_with_new_tree(tree,2)
 #
 # p new_tree.sort
 # p tree.sort
