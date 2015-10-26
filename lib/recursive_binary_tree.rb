@@ -190,7 +190,7 @@ class BinaryTree
       elsif !reader.right.nil? && reader.right.root == value
         new_tree = @reader.right.destructive_merge_with_new_tree(BinaryTree.new(value),value)
         reader.right = nil
-        break
+        break 
       elsif value < reader.root
         @reader = reader.left
       elsif value > reader.root
