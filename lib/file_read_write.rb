@@ -1,5 +1,4 @@
-require_relative '../lib/night_writer_2'
-require_relative '../lib/night_reader_2'
+require_relative 'recursive_binary_tree'
 require 'pry'
 
 class FileReaderWriter
@@ -14,7 +13,7 @@ class FileReaderWriter
   def input_output
     tree = BinaryTree.new
     @input.each_line do |entry|
-        tree.add_node(entry.to_i)
+        tree.add_node(entry)
     end
 
     sorted_array = tree.sort

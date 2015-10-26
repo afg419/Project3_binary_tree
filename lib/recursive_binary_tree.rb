@@ -196,6 +196,7 @@ class BinaryTree
       elsif value > reader.root
         @reader = reader.right
       end
+
     end
     new_tree
   end
